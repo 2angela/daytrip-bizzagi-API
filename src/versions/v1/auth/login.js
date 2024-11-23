@@ -1,4 +1,4 @@
-import { firebaseAuth } from "../index.js";
+import { firebaseAuth } from "../../../index.js";
 
 const Login = async (request, response) => {
     const { email, password } = request.body;
