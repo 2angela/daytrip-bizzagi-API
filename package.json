@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "npx nodemon",
-    "start": "node build/index.js",
+    "start": "node src/index.js",
     "format": "prettier --write .",
     "lint": "prettier --check . && eslint .",
     "lint:fix": "eslint . --fix "
