@@ -5,7 +5,8 @@ const ErrorHandler = async (
   //eslint-disable-next-line
   next
 ) => {
-  return response.status(400).json({
+  const statusCode = typeof err.code == "number" ? err.code : 400;
+  return response.status(statusCode).json({
     status: false,
     message: "Bad Request",
     data: {
