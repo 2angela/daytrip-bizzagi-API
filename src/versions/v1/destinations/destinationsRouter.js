@@ -5,7 +5,7 @@ import List from "./list.js";
 import Get from "./get.js";
 
 const destinationsRouter = Router();
-destinationsRouter.post("/create", Auth, Create);
+destinationsRouter.post("/create", Create);
 destinationsRouter.get("/list", Auth, List);
 destinationsRouter.get("/list/:id", Auth, Get);
 

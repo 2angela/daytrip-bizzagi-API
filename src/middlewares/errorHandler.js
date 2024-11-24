@@ -7,7 +7,7 @@ const ErrorHandler = async (
 ) => {
   const statusCode = typeof err.code == "number" ? err.code : 400;
   return response.status(statusCode).json({
-    status: false,
+    success: false,
     message: "Bad Request",
     data: {
       error: err.message,
