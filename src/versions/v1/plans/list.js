@@ -4,7 +4,7 @@ const List = async (request, response, next) => {
   try {
     const { uid } = response.locals.user;
 
-    const plansSnapshot = await db.collection(`users/${uid}/plans`).get();
+    const plansSnapshot = await db.collection(`Users/${uid}/Plans`).get();
     const plans = plansSnapshot.docs.map((doc) => {
       return {
         id: doc.id,
