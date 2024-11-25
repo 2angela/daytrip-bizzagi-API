@@ -4,8 +4,8 @@ import fs from "fs";
 
 const Create = async (request, response, next) => {
   try {
-    const { id } = request.body;
-    if (!id) throw new Error("id is required");
+    const { place_id: id } = request.params;
+    if (!id) throw new Error("place id is required");
 
     const docRef = doc(db, "Destinations", id);
     // check if destination id exist in db
@@ -125,7 +125,7 @@ const Create = async (request, response, next) => {
       await setDoc(docRef, data);
       return response.status(201).json({
         success: true,
-        message: "Created",
+        message: "Destination details created",
         data
       });
     }

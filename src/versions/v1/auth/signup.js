@@ -15,6 +15,7 @@ const SignUp = async (request, response, next) => {
       password
     );
     const uid = userCredential.user.uid;
+    const token = userCredential.user.getIdToken();
     await setDoc(doc(db, "Users", uid), {
       name,
       email
@@ -26,7 +27,8 @@ const SignUp = async (request, response, next) => {
       data: {
         uid,
         name,
-        email
+        email,
+        token
       }
     });
   } catch (err) {

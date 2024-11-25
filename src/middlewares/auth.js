@@ -9,7 +9,7 @@ const Auth = (request, response, next) => {
 
     // check if token is still active in firebase
     let checkRevoked = true;
-    firebaseAuth()
+    firebaseAuth
       .verifyIdToken(token, checkRevoked)
       .then((payload) => {
         response.locals.user = payload;
