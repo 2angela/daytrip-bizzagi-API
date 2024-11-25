@@ -63,11 +63,16 @@ const Create = async (request, response, next) => {
       // restructure periods array into Map
       let opens = [];
       let closes = [];
+      const checkDigit = (x) => {
+        // convert one digit time format to two digits
+        return x < 10 ? `0${x}` : x;
+      };
+
       for (const period of periods) {
         const { hour: hourOpen, minute: minuteOpen } = period.open;
         const { hour: hourClose, minute: minuteClose } = period.close;
-        opens.push(`${hourOpen}:${minuteOpen}`);
-        closes.push(`${hourClose}:${minuteClose}`);
+        opens.push(`${checkDigit(hourOpen)}:${checkDigit(minuteOpen)}`);
+        closes.push(`${checkDigit(hourClose)}:${checkDigit(minuteClose)}`);
       }
       const photoLimit = 5; // limit place photos to 5 only
       const photosArray = photos
