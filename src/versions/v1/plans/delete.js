@@ -12,7 +12,7 @@ const Delete = async (request, response, next) => {
       });
     }
 
-    const planRef = db.collection(`users/${uid}/plans`).doc(plan_id);
+    const planRef = db.collection(`Users/${uid}/Plans`).doc(plan_id);
     const planSnapshot = await planRef.get();
 
     if (!planSnapshot.exists) {
