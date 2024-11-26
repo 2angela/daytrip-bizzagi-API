@@ -69,12 +69,18 @@ const Create = async (request, response, next) => {
       };
 
       for (const period of periods) {
-        const { hour: hourOpen, minute: minuteOpen } = period.open;
-        const { hour: hourClose, minute: minuteClose } = period.close;
+        const { hour: hourOpen, minute: minuteOpen } = period.open || {
+          hour: 0,
+          minute: 0
+        };
+        const { hour: hourClose, minute: minuteClose } = period.close || {
+          hour: 0,
+          minute: 0
+        };
         opens.push(`${checkDigit(hourOpen)}:${checkDigit(minuteOpen)}`);
         closes.push(`${checkDigit(hourClose)}:${checkDigit(minuteClose)}`);
       }
-      const photoLimit = 5; // limit place photos to 5 only
+      const photoLimit = photos.length < 5 ? photos.length : 5; // limit place photos to 5 only
       const photosArray = photos
         .slice(0, photoLimit)
         .map((photo) => photo.name);
