@@ -4,8 +4,8 @@ import fs from "fs";
 
 const Create = async (request, response, next) => {
   try {
-    const { id } = request.body;
-    if (!id) throw new Error("id is required");
+    const { place_id: id } = request.params;
+    if (!id) throw new Error("place id is required");
 
     const docRef = doc(db, "Destinations", id);
     // check if destination id exist in db
@@ -63,11 +63,16 @@ const Create = async (request, response, next) => {
       // restructure periods array into Map
       let opens = [];
       let closes = [];
+      const checkDigit = (x) => {
+        // convert one digit time format to two digits
+        return x < 10 ? `0${x}` : x;
+      };
+
       for (const period of periods) {
         const { hour: hourOpen, minute: minuteOpen } = period.open;
         const { hour: hourClose, minute: minuteClose } = period.close;
-        opens.push(`${hourOpen}:${minuteOpen}`);
-        closes.push(`${hourClose}:${minuteClose}`);
+        opens.push(`${checkDigit(hourOpen)}:${checkDigit(minuteOpen)}`);
+        closes.push(`${checkDigit(hourClose)}:${checkDigit(minuteClose)}`);
       }
       const photoLimit = 5; // limit place photos to 5 only
       const photosArray = photos
@@ -120,7 +125,7 @@ const Create = async (request, response, next) => {
       await setDoc(docRef, data);
       return response.status(201).json({
         success: true,
-        message: "Created",
+        message: "Destination details created",
         data
       });
     }
