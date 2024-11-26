@@ -3,16 +3,16 @@ import { db } from "../../../index.js";
 const Delete = async (request, response, next) => {
   try {
     const { uid } = response.locals.user;
-    const { plan_id } = request.params;
+    const { id } = request.params;
 
-    if (!plan_id) {
+    if (!id) {
       return response.status(400).json({
         success: false,
         message: "Plan ID is required"
       });
     }
 
-    const planRef = db.collection(`Users/${uid}/Plans`).doc(plan_id);
+    const planRef = db.collection(`Users/${uid}/Plans`).doc(id);
     const planSnapshot = await planRef.get();
 
     if (!planSnapshot.exists) {

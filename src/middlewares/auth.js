@@ -1,29 +1,22 @@
-import { firebaseAuth } from "../index.js";
+import { admin } from "../firebase.js";
 
-const Auth = (request, response, next) => {
-  // uncomment after login handler is done
+const Auth = async (request, response, next) => {
   try {
-    // check if token is included in req headers
-    const token = request.headers.authorization;
-    if (!token) throw new Error("Authentication token is not provided");
+    const authHeader = request.headers.authorization;
+    if (!authHeader) throw new Error("Authentication token is not provided");
 
-    // check if token is still active in firebase
-    let checkRevoked = true;
-    firebaseAuth()
-      .verifyIdToken(token, checkRevoked)
-      .then((payload) => {
-        response.locals.user = payload;
-        return next();
-      })
-      .catch((error) => {
-        if (error.code == "auth/id-token-revoked") {
-          throw new Error("Token has been revoked, please reauthenticate");
-        } else {
-          throw new Error("Token is invalid");
-        }
-      });
+    const token = authHeader.split(" ")[1];
+    if (!token) throw new Error("Invalid token format");
+
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    response.locals.user = decodedToken;
+    return next();
   } catch (err) {
-    return next(err);
+    return response.status(401).json({
+      success: false,
+      message: "Authentication failed",
+      error: err.message,
+    });
   }
 };
 
