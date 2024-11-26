@@ -1,26 +1,41 @@
-import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../index.js";
 
 const Get = async (request, response, next) => {
   try {
     const { id } = request.params;
-    if (!id) throw new Error("uid and id are required");
+    if (!id) {
+      return response.status(400).json({
+        success: false,
+        message: "Plan ID is required"
+      });
+    }
+
     const { uid } = response.locals.user;
-    if (!uid) throw new Error("User not found");
+    if (!uid) {
+      return response.status(401).json({
+        success: false,
+        message: "Unauthorized: User ID is missing"
+      });
+    }
 
-    const docRef = doc(db, "Users", uid, "Plans", id);
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) throw new Error("The requested data does not exist");
+    const planRef = db.collection("Users").doc(uid).collection("Plans").doc(id);
+    const planSnapshot = await planRef.get();
 
-    const data = docSnap.data();
+    if (!planSnapshot.exists) {
+      return response.status(404).json({
+        success: false,
+        message: "Plan not found"
+      });
+    }
+
+    const planData = planSnapshot.data();
     return response.status(200).json({
       success: true,
-      message: `Plans data for id ${id} retrieved`,
-      data
+      message: "Plan retrieved successfully",
+      data: planData
     });
-  } catch (err) {
-    console.error(err);
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 

@@ -1,22 +1,28 @@
-import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../index.js";
 
 const List = async (request, response, next) => {
   try {
-    const querySnapshot = await getDocs(collection(db, "Destinations"));
-    if (!querySnapshot) throw new Error("No data was found");
+    const querySnapshot = await db.collection("Destinations").get();
+    if (!querySnapshot) {
+      return response.status(404).json({
+        success: false,
+        message: "No destinations found",
+        data: [],
+      });
+    }
 
-    let data = [];
-    querySnapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
+    const data = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
     return response.status(200).json({
       success: true,
       message: "Destinations data retrieved",
-      data
+      data,
     });
-  } catch (err) {
-    console.error(err);
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 
