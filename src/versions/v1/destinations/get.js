@@ -11,7 +11,7 @@ const Get = async (request, response, next) => {
       });
     }
 
-    const destinationRef = await db.collection("destinations").doc(id);
+    const destinationRef = await db.collection("Destinations").doc(id);
     const destination = await destinationRef.get();
 
     if (!destination.exists) {
