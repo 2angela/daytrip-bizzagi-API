@@ -1,8 +1,7 @@
 import schema from "../../../schema/signup.js";
-import { firebaseAuth } from "../../../index.js";
+import { firebaseAuth, db } from "../../../index.js";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-// import { doc, setDoc } from "firebase/firestore";
-import { admin } from "../../../firebase.js";
+import { doc, setDoc } from "firebase/firestore";
 
 const SignUp = async (request, response, next) => {
   try {
@@ -15,23 +14,22 @@ const SignUp = async (request, response, next) => {
       email,
       password
     );
-    
     const uid = userCredential.user.uid;
-    await admin.firestore().collection("Users").doc(uid).set({
+    const token = await userCredential.user.getIdToken();
+    await setDoc(doc(db, "Users", uid), {
+      uid,
       name,
       email
     });
 
-    const token = await userCredential.user.getIdToken();
-
     return response.status(201).json({
       success: true,
-      message: "Created",
+      message: "Sign up successful",
       data: {
         uid,
         name,
         email,
-        token: token
+        token
       }
     });
   } catch (err) {

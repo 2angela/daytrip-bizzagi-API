@@ -1,51 +1,26 @@
+import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../index.js";
 
 const Update = async (request, response, next) => {
   try {
-    const { uid } = response.locals.user;
     const { id } = request.params;
+    if (!id) throw new Error("uid and id are required");
     const data = request.body;
+    if (!data) throw new Error("Updated data in request body is required");
+    const { uid } = response.locals.user;
+    if (!uid) throw new Error("User not found");
 
-    if (!id) {
-      return response.status(400).json({
-        success: false,
-        message: "Plan ID is required"
-      });
-    }
-
-    if (!uid) {
-      return response.status(401).json({
-        success: false,
-        message: "Unauthorized: User ID is missing"
-      });
-    }
-
-    if (!data || Object.keys(data).length === 0) {
-      return response.status(400).json({
-        success: false,
-        message: "Request body is required"
-      });
-    }
-
-    const planRef = db.collection("Users").doc(uid).collection("Plans").doc(id);
-    const planSnapshot = await planRef.get();
-
-    if (!planSnapshot.exists) {
-      return response.status(404).json({
-        success: false,
-        message: "Plan not found"
-      });
-    }
-
-    await planRef.update(data);
+    const docRef = doc(db, "Users", uid, "Plans", id);
+    await updateDoc(docRef, { ...data });
 
     return response.status(200).json({
       success: true,
-      message: "Plan updated successfully",
-      data,
+      message: `Plans data for id ${id} updated`,
+      data
     });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    console.error(err);
+    next(err);
   }
 };
 

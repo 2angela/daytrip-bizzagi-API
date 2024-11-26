@@ -1,35 +1,25 @@
-import { db } from "../../../firebase.js";
+import { db } from "../../../index.js";
+import { collection, getDocs } from "firebase/firestore";
 
-const List = async (request, response) => {
+const List = async (request, response, next) => {
   try {
-    const userId = response.locals.user.uid;
+    const { uid } = response.locals.user;
+    if (!uid) throw new Error("User not found");
 
-    const plansRef = db.collection('Users').doc(userId).collection('Plans');
-    const snapshot = await plansRef.get();
+    const querySnapshot = await getDocs(collection(db, "Users", uid, "Plans"));
+    if (!querySnapshot) throw new Error("No data was found");
 
-    if (snapshot.empty) {
-      return response.status(404).json({
-        success: false,
-        message: "No plans found for this user",
-      });
-    }
-
-    const plans = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    let data = [];
+    querySnapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
 
     return response.status(200).json({
       success: true,
-      data: plans,
+      message: `Plans data for user ${uid} retrieved`,
+      data
     });
-  } catch (error) {
-    console.error(error);
-    return response.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-      error: error.message,
-    });
+  } catch (err) {
+    console.error(err);
+    next(err);
   }
 };
 

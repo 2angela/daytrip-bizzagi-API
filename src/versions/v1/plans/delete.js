@@ -1,28 +1,15 @@
 import { db } from "../../../index.js";
-// Not Finished
+import { doc, deleteDoc } from "firebase/firestore";
+
 const Delete = async (request, response, next) => {
   try {
-    const { uid } = response.locals.user;
     const { id } = request.params;
+    if (!id) throw new Error("uid and id are required");
+    const { uid } = response.locals.user;
+    if (!uid) throw new Error("User not found");
 
-    if (!id) {
-      return response.status(400).json({
-        success: false,
-        message: "Plan ID is required"
-      });
-    }
-
-    const planRef = db.collection(`Users/${uid}/Plans`).doc(id);
-    const planSnapshot = await planRef.get();
-
-    if (!planSnapshot.exists) {
-      return response.status(404).json({
-        success: false,
-        message: "Plan not found"
-      });
-    }
-
-    await planRef.delete();
+    const docRef = doc(db, "Users", uid, "Plans", id);
+    await deleteDoc(docRef);
 
     return response.status(200).json({
       success: true,

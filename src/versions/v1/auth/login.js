@@ -1,7 +1,8 @@
-import { firebaseAuth } from "../../../index.js";
+import { firebaseAuth, db } from "../../../index.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
-const Login = async (request, response) => {
+const Login = async (request, response, next) => {
   const { email, password } = request.body;
 
   try {
@@ -10,17 +11,29 @@ const Login = async (request, response) => {
       email,
       password
     );
-    const token = await userCredential.user.getIdToken();
 
-    response.status(200).json({
+    // get token
+    const token = await userCredential.user.getIdToken();
+    const uid = userCredential.user.uid;
+    // get user's data from database
+    const docRef = doc(db, "Users", uid);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) throw new Error("The requested data does not exist");
+
+    const { name } = docSnap.data();
+
+    return response.status(200).json({
+      success: true,
       message: "Login successful",
-      token: token
+      data: {
+        uid,
+        email,
+        name,
+        token
+      }
     });
-  } catch (error) {
-    response.status(401).json({
-      message: "Login failed",
-      error: error.message
-    });
+  } catch (err) {
+    next(err);
   }
 };
 
