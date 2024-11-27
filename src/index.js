@@ -1,8 +1,5 @@
 import express from "express";
 import dotenv from "dotenv";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 import { initializeApp as initializeAppAdmin, cert } from "firebase-admin/app";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
@@ -19,15 +16,8 @@ const requiredEnv = [
   "FIREBASE_API_KEY",
   "MESSAGING_SENDER_ID",
   "APP_ID",
-  "STORAGE_PRIVATE_KEY_ID",
-  "STORAGE_PRIVATE_KEY",
-  "STORAGE_CLIENT_EMAIL",
-  "STORAGE_CLIENT_ID",
-  "ADMIN_PRIVATE_KEY_ID",
-  "ADMIN_PRIVATE_KEY",
-  "ADMIN_CLIENT_EMAIL",
-  "ADMIN_CLIENT_ID",
-  "ADMIN_CLIENT_X509_CERT_URL"
+  "BASE64_STORAGE_SERVICE_ACCOUNT",
+  "BASE64_FIREBASE_ADMIN_SERVICE_ACCOUNT"
 ];
 
 requiredEnv.forEach((key) => {
@@ -35,20 +25,11 @@ requiredEnv.forEach((key) => {
 });
 
 // Initialize GCS
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const credentialsFile = JSON.parse(
-  fs.readFileSync(__dirname + "/../keys/credentials.json", "utf-8")
-);
-const storageCredentials = {
-  ...credentialsFile,
-  project_id: "c242-dt01",
-  private_key_id: process.env.STORAGE_PRIVATE_KEY_ID,
-  private_key: process.env.STORAGE_PRIVATE_KEY,
-  client_email: process.env.STORAGE_CLIENT_EMAIL,
-  client_id: process.env.STORAGE_CLIENT_ID,
-  client_x509_cert_url: process.env.STORAGE_CLIENT_X509_CERT_URL
-};
+const decodedStorageSA = Buffer.from(
+  process.env.BASE64_STORAGE_SERVICE_ACCOUNT,
+  "base64"
+).toString("utf-8");
+const storageCredentials = JSON.parse(decodedStorageSA);
 const storage = new Storage({
   projectId: "C242-DT01",
   credentials: storageCredentials
@@ -56,15 +37,11 @@ const storage = new Storage({
 const gcs = storage.bucket("c242-dt01");
 
 // Initialize firebase admin, firebase app, firebase auth, firestore
-const adminCredentials = {
-  ...credentialsFile,
-  project_id: "c242-dt01",
-  private_key_id: process.env.ADMIN_PRIVATE_KEY_ID,
-  private_key: process.env.ADMIN_PRIVATE_KEY,
-  client_email: process.env.ADMIN_CLIENT_EMAIL,
-  client_id: process.env.ADMIN_CLIENT_ID,
-  client_x509_cert_url: process.env.ADMIN_CLIENT_X509_CERT_URL
-};
+const decodedFirebaseAdminSA = Buffer.from(
+  process.env.BASE64_FIREBASE_ADMIN_SERVICE_ACCOUNT,
+  "base64"
+).toString("utf-8");
+const adminCredentials = JSON.parse(decodedFirebaseAdminSA);
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
   authDomain: "c242-dt01.firebaseapp.com",
