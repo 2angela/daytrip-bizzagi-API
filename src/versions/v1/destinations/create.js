@@ -22,7 +22,7 @@ const Create = async (request, response, next) => {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": `${process.env.PLACES_API_KEY}`,
           "X-Goog-FieldMask":
-            "location,displayName,types,primaryType,formattedAddress,regularOpeningHours,photos"
+            "location,displayName,types,primaryType,rating,formattedAddress,regularOpeningHours,photos"
         }
       }
     );
@@ -35,10 +35,14 @@ const Create = async (request, response, next) => {
         displayName,
         types,
         primaryType,
+        rating,
         formattedAddress: address,
         regularOpeningHours,
         photos
       } = placeDetails;
+
+      if (!location)
+        throw new Error("couldn't find latitude and longitude of", displayName);
 
       const validDestinationTypes = [
         "tourist_attraction",
@@ -69,12 +73,18 @@ const Create = async (request, response, next) => {
       };
 
       for (const period of periods) {
-        const { hour: hourOpen, minute: minuteOpen } = period.open;
-        const { hour: hourClose, minute: minuteClose } = period.close;
+        const { hour: hourOpen, minute: minuteOpen } = period.open || {
+          hour: 0,
+          minute: 0
+        };
+        const { hour: hourClose, minute: minuteClose } = period.close || {
+          hour: 0,
+          minute: 0
+        };
         opens.push(`${checkDigit(hourOpen)}:${checkDigit(minuteOpen)}`);
         closes.push(`${checkDigit(hourClose)}:${checkDigit(minuteClose)}`);
       }
-      const photoLimit = 5; // limit place photos to 5 only
+      const photoLimit = photos.length < 5 ? photos.length : 5; // limit place photos to 5 only
       const photosArray = photos
         .slice(0, photoLimit)
         .map((photo) => photo.name);
@@ -113,9 +123,10 @@ const Create = async (request, response, next) => {
         latitude,
         longitude,
         name,
-        types,
-        primaryType,
-        address,
+        types: types || [],
+        primaryType: primaryType || "",
+        address: address || "",
+        rating: rating || "No rating",
         opens,
         closes,
         photosList: photosLinks
