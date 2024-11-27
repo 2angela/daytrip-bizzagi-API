@@ -22,7 +22,7 @@ const Create = async (request, response, next) => {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": `${process.env.PLACES_API_KEY}`,
           "X-Goog-FieldMask":
-            "location,displayName,types,primaryType,formattedAddress,regularOpeningHours,photos"
+            "location,displayName,types,primaryType,rating,formattedAddress,regularOpeningHours,photos"
         }
       }
     );
@@ -35,10 +35,14 @@ const Create = async (request, response, next) => {
         displayName,
         types,
         primaryType,
+        rating,
         formattedAddress: address,
         regularOpeningHours,
         photos
       } = placeDetails;
+
+      if (!location)
+        throw new Error("couldn't find latitude and longitude of", displayName);
 
       const validDestinationTypes = [
         "tourist_attraction",
@@ -119,9 +123,10 @@ const Create = async (request, response, next) => {
         latitude,
         longitude,
         name,
-        types,
-        primaryType,
-        address,
+        types: types || [],
+        primaryType: primaryType || "",
+        address: address || "",
+        rating: rating || "No rating",
         opens,
         closes,
         photosList: photosLinks
