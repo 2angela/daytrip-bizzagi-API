@@ -80,7 +80,7 @@ const Create = async (request, response, next) => {
   
       // Simpan data ke Firestore
       const planRef = doc(db, "Users", uid, "Plans", plan_id);
-      await setDoc(planRef, { data: planData });
+      await setDoc(planRef, planData);
   
       return response.status(201).json({
         success: true,
