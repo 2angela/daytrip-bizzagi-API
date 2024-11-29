@@ -42,7 +42,7 @@ const Create = async (request, response, next) => {
       } = placeDetails;
 
       if (!location)
-        throw new Error("couldn't find latitude and longitude of", displayName);
+        throw new Error("couldn't find latitude and longitude of", id);
 
       const validDestinationTypes = [
         "tourist_attraction",
@@ -53,7 +53,7 @@ const Create = async (request, response, next) => {
       ];
 
       // reject request for non-travel places
-      const checkTypes = types.filter((el) =>
+      const checkTypes = types?.filter((el) =>
         validDestinationTypes.includes(el)
       );
       if (!checkTypes.length > 0)
@@ -63,7 +63,8 @@ const Create = async (request, response, next) => {
 
       const { latitude, longitude } = location;
       const { text: name } = displayName;
-      const { periods } = regularOpeningHours;
+      const { periods } = regularOpeningHours || { periods: [] };
+      console.log(periods);
       // restructure periods array into Map
       let opens = [];
       let closes = [];
@@ -84,6 +85,9 @@ const Create = async (request, response, next) => {
         opens.push(`${checkDigit(hourOpen)}:${checkDigit(minuteOpen)}`);
         closes.push(`${checkDigit(hourClose)}:${checkDigit(minuteClose)}`);
       }
+      if (opens.length == 0) opens = ["00:00"]; // handler if regularOpeningHours is undefined
+      if (closes.length == 0) closes = ["00:00"]; // handler if regularOpeningHours is undefined
+
       const photoLimit = photos.length < 5 ? photos.length : 5; // limit place photos to 5 only
       const photosArray = photos
         .slice(0, photoLimit)
@@ -122,11 +126,11 @@ const Create = async (request, response, next) => {
       const data = {
         latitude,
         longitude,
-        name,
+        name: name || "",
         types: types || [],
         primaryType: primaryType || "",
         address: address || "",
-        rating: rating || "No rating",
+        rating: rating || "",
         opens,
         closes,
         photosList: photosLinks
