@@ -56,7 +56,7 @@ const Create = async (request, response, next) => {
       const checkTypes = types?.filter((el) =>
         validDestinationTypes.includes(el)
       );
-      if (!checkTypes.length > 0)
+      if (!checkTypes.length > 0 || !checkTypes)
         throw new Error(
           `Only travel destinations are allowed. Current destination types: ${types}. Allowed destinations: ${validDestinationTypes}`
         );
@@ -64,8 +64,8 @@ const Create = async (request, response, next) => {
       const { latitude, longitude } = location;
       const { text: name } = displayName;
       const { periods } = regularOpeningHours || { periods: [] };
-      console.log(periods);
-      // restructure periods array into Map
+
+      // restructure periods array
       let opens = [];
       let closes = [];
       const checkDigit = (x) => {
@@ -88,38 +88,41 @@ const Create = async (request, response, next) => {
       if (opens.length == 0) opens = ["00:00"]; // handler if regularOpeningHours is undefined
       if (closes.length == 0) closes = ["00:00"]; // handler if regularOpeningHours is undefined
 
-      const photoLimit = photos.length < 5 ? photos.length : 5; // limit place photos to 5 only
-      const photosArray = photos
-        .slice(0, photoLimit)
-        .map((photo) => photo.name);
-
       // request place photos
       let photosLinks = [];
-      for (var i = 0; i < photoLimit; i++) {
-        await fetch(
-          `https://places.googleapis.com/v1/${photosArray[i]}/media?maxHeightPx=400&key=${process.env.PLACES_API_KEY}`
-        ).then(async (res) => {
-          // save the image
-          const buffer = await res.arrayBuffer();
-          fs.writeFileSync(`photo${i}.jpg`, Buffer.from(buffer));
-        });
 
-        // store in cloud storage
-        const bucketPath = `places/${id}/${i}.jpg`;
-        await gcs.upload(`photo${i}.jpg`, {
-          destination: bucketPath,
-          public: true,
-          metadata: {
-            contentType: "image/jpeg"
-          }
-        });
-        const url = `https://storage.googleapis.com/c242-dt01/places/${id}/${i}.jpg`;
-        photosLinks.push(url);
-        fs.unlink(`photo${i}.jpg`, (err) => {
-          if (err) {
-            throw new Error("failed to save images to cloud");
-          }
-        });
+      if (photos) {
+        const photoLimit = photos.length < 5 ? photos.length : 5; // limit place photos to 5 only
+        const photosArray = photos
+          .slice(0, photoLimit)
+          .map((photo) => photo.name);
+
+        for (var i = 0; i < photoLimit; i++) {
+          await fetch(
+            `https://places.googleapis.com/v1/${photosArray[i]}/media?maxHeightPx=400&key=${process.env.PLACES_API_KEY}`
+          ).then(async (res) => {
+            // save the image
+            const buffer = await res.arrayBuffer();
+            fs.writeFileSync(`photo${i}.jpg`, Buffer.from(buffer));
+          });
+
+          // store in cloud storage
+          const bucketPath = `places/${id}/${i}.jpg`;
+          await gcs.upload(`photo${i}.jpg`, {
+            destination: bucketPath,
+            public: true,
+            metadata: {
+              contentType: "image/jpeg"
+            }
+          });
+          const url = `https://storage.googleapis.com/c242-dt01/places/${id}/${i}.jpg`;
+          photosLinks.push(url);
+          fs.unlink(`photo${i}.jpg`, (err) => {
+            if (err) {
+              throw new Error("failed to save images to cloud");
+            }
+          });
+        }
       }
 
       // restructure
