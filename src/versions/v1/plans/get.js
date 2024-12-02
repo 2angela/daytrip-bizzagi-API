@@ -13,6 +13,17 @@ const Get = async (request, response, next) => {
     if (!docSnap.exists()) throw new Error("The requested data does not exist");
 
     const data = docSnap.data();
+
+    // Sorts key 'data'
+    if (data.data) {
+      data.data = Object.keys(data.data)
+        .sort()
+        .reduce((sortedData, key) => {
+          sortedData[key] = data.data[key];
+          return sortedData;
+        }, {});
+    }
+
     return response.status(200).json({
       success: true,
       message: `Plans data for id ${id} retrieved`,

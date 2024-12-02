@@ -10,7 +10,19 @@ const List = async (request, response, next) => {
     if (!querySnapshot) throw new Error("No data was found");
 
     let data = [];
-    querySnapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
+    querySnapshot.forEach((doc) => {
+      const plan = { id: doc.id, ...doc.data() };
+
+      // Sorts key 'data'
+      plan.data = Object.keys(plan.data)
+        .sort()
+        .reduce((sortedData, key) => {
+          sortedData[key] = plan.data[key];
+          return sortedData;
+        }, {});
+
+        data.push(plan);
+    });
 
     return response.status(200).json({
       success: true,
