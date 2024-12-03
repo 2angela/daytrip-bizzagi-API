@@ -21,7 +21,10 @@ const Create = async (request, response, next) => {
       return response.status(400).json({
         success: false,
         message: "Missing required fields",
-        data: { error: "uid, num_days, lokasi_user, places, start_date, end_date, and plan_name are required" }
+        data: {
+          error:
+            "uid, num_days, lokasi_user, places, start_date, end_date, and plan_name are required"
+        }
       });
     }
 
@@ -44,7 +47,7 @@ const Create = async (request, response, next) => {
     // Generate plan_id
     const plansCollection = collection(db, "Users", uid, "Plans");
     const querySnapshot = await getDocs(plansCollection);
-    
+
     let maxId = 0;
     querySnapshot.forEach((doc) => {
       const currentId = parseInt(doc.id.replace("plan", ""));
@@ -101,7 +104,7 @@ const Create = async (request, response, next) => {
 
     return response.status(201).json({
       success: true,
-      message:  `Plan with id: ${plan_id}, created successfully`,
+      message: `Plan with id: ${plan_id}, created successfully`,
       data: planData
     });
   } catch (err) {

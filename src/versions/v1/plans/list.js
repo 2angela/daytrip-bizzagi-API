@@ -21,7 +21,7 @@ const List = async (request, response, next) => {
           return sortedData;
         }, {});
 
-        data.push(plan);
+      data.push(plan);
     });
 
     return response.status(200).json({

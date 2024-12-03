@@ -100,11 +100,15 @@ const Create = async (request, response, next) => {
         for (var i = 0; i < photoLimit; i++) {
           await fetch(
             `https://places.googleapis.com/v1/${photosArray[i]}/media?maxHeightPx=400&key=${process.env.PLACES_API_KEY}`
-          ).then(async (res) => {
-            // save the image
-            const buffer = await res.arrayBuffer();
-            fs.writeFileSync(`photo${i}.jpg`, Buffer.from(buffer));
-          });
+          )
+            .then(async (res) => {
+              // save the image
+              const buffer = await res.arrayBuffer();
+              fs.writeFileSync(`photo${i}.jpg`, Buffer.from(buffer));
+            })
+            .catch((err) => {
+              throw new Error(err);
+            });
 
           // store in cloud storage
           const bucketPath = `places/${id}/${i}.jpg`;
