@@ -5,7 +5,7 @@ import axios from "axios";
 const Create = async (request, response, next) => {
   try {
     const { uid } = response.locals.user;
-    const { num_days, lokasi_user, places, start_date, end_date } =
+    const { num_days, lokasi_user, places, start_date, end_date, plan_name } =
       request.body;
 
     // Validasi data yang diperlukan
@@ -15,12 +15,13 @@ const Create = async (request, response, next) => {
       !lokasi_user ||
       !places ||
       !start_date ||
-      !end_date
+      !end_date ||
+      !plan_name
     ) {
       return response.status(400).json({
         success: false,
         message: "Missing required fields",
-        data: { error: "uid, num_days, lokasi_user, and places are required" }
+        data: { error: "uid, num_days, lokasi_user, places, start_date, end_date, and plan_name are required" }
       });
     }
 
@@ -43,8 +44,13 @@ const Create = async (request, response, next) => {
     // Generate plan_id
     const plansCollection = collection(db, "Users", uid, "Plans");
     const querySnapshot = await getDocs(plansCollection);
-    const planCount = querySnapshot.size;
-    const plan_id = `plan${planCount + 1}`;
+    
+    let maxId = 0;
+    querySnapshot.forEach((doc) => {
+      const currentId = parseInt(doc.id.replace("plan", ""));
+      if (currentId > maxId) maxId = currentId;
+    });
+    const plan_id = `plan${maxId + 1}`;
 
     // Kirim request ke API model ML
     const mlApiResponse = await axios.post(
@@ -76,6 +82,7 @@ const Create = async (request, response, next) => {
 
     // Bentuk data untuk disimpan ke Firestore
     const planData = {
+      plan_name,
       start_date: start_date || "default_start_date",
       end_date: end_date || "default_end_date",
       data: {}
@@ -94,7 +101,7 @@ const Create = async (request, response, next) => {
 
     return response.status(201).json({
       success: true,
-      message: "Plan created successfully",
+      message:  `Plan with id: ${plan_id}, created successfully`,
       data: planData
     });
   } catch (err) {
