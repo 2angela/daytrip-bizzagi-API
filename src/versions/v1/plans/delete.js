@@ -13,7 +13,7 @@ const Delete = async (request, response, next) => {
 
     return response.status(200).json({
       success: true,
-      message: "Plan deleted successfully"
+      message:  `Plan with id: ${id}, deleted successfully`
     });
   } catch (error) {
     next(error);
