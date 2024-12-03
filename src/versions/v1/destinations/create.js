@@ -27,6 +27,9 @@ const Create = async (request, response, next) => {
       }
     );
 
+    if (placeDetailsResponse.status != 200)
+      throw new Error("Error while fetching place data from Places API");
+
     if (placeDetailsResponse.status == 200) {
       const placeDetails = await placeDetailsResponse.json();
       // destructure response
