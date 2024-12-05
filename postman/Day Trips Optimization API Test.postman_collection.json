@@ -4,7 +4,8 @@
 		"name": "Day Trips Optimization API Test",
 		"description": "To run the automated testing:\n\n1. Import the testing collection to Postman (file name: Day Trips Optimization Test.postman_collection.json)\n    \n2. Import the testing environment to Postman (file name: Day Trips Optimization Test.postman_environment.json)\n    \n3. Make sure the environment is set to \"Day Trips Optimization\"\n    \n4. Click \"Run\" button\n    \n5. On Runner tab, click \"Run Day Trips Optimization Test\" button",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "31198296"
+		"_exporter_id": "31198296",
+		"_collection_link": "https://c242-dt01.postman.co/workspace/C242-DT01-Workspace~c07dd806-b976-4649-b364-4ddb685f5714/collection/31198296-3af6d909-ab80-4e11-968a-2b30fc23a790?action=share&source=collection_link&creator=31198296"
 	},
 	"item": [
 		{
@@ -199,12 +200,13 @@
 							"    pm.expect(responseJson.data).to.be.an('object');\r",
 							"});\r",
 							"\r",
-							"pm.test('response body data should contain error message', () => {\r",
+							"pm.test('response body data should contain correct error message', () => {\r",
 							"    const responseJson = pm.response.json();\r",
 							"    const { data } = responseJson;\r",
 							"\r",
 							"    pm.expect(data).to.haveOwnProperty('error');\r",
 							"    pm.expect(data.error).to.not.equals('');\r",
+							"    pm.expect(data.error).to.include(\"Destination data exists\")\r",
 							"});"
 						],
 						"type": "text/javascript",
@@ -241,7 +243,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{API_URL}}/v1/destinations/create/{{placeId}}",
+					"raw": "{{API_URL}}/v1/destinations/create/{{placeId1}}",
 					"host": [
 						"{{API_URL}}"
 					],
@@ -249,7 +251,7 @@
 						"v1",
 						"destinations",
 						"create",
-						"{{placeId}}"
+						"{{placeId1}}"
 					]
 				}
 			},
@@ -327,7 +329,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Destination",
+			"name": "Get Destination 1",
 			"event": [
 				{
 					"listen": "test",
@@ -366,6 +368,7 @@
 							"    pm.expect(data.id).to.not.equals('');\r",
 							"    pm.expect(data).to.haveOwnProperty('primaryType');\r",
 							"    pm.expect(data).to.haveOwnProperty('address');\r",
+							"    pm.expect(data).to.haveOwnProperty('rating');\r",
 							"    pm.expect(data).to.haveOwnProperty('latitude');\r",
 							"    pm.expect(data.latitude).to.be.a(\"number\");\r",
 							"    pm.expect(data).to.haveOwnProperty('longitude');\r",
@@ -379,6 +382,12 @@
 							"    pm.expect(data).to.haveOwnProperty('types');\r",
 							"    pm.expect(data.types).to.be.an(\"array\");\r",
 							"    pm.expect(data).to.haveOwnProperty('name');\r",
+							"\r",
+							"    pm.environment.set('lat1', data.latitude);\r",
+							"    pm.environment.set('long1', data.longitude);\r",
+							"    pm.environment.set('open1', data.opens[0]);\r",
+							"    pm.environment.set('close1', data.closes[0]);\r",
+							"    pm.environment.set('rating1', data.rating);\r",
 							"});"
 						],
 						"type": "text/javascript",
@@ -400,7 +409,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{API_URL}}/v1/destinations/list/{{placeId}}",
+					"raw": "{{API_URL}}/v1/destinations/list/{{placeId1}}",
 					"host": [
 						"{{API_URL}}"
 					],
@@ -408,7 +417,577 @@
 						"v1",
 						"destinations",
 						"list",
-						"{{placeId}}"
+						"{{placeId1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Destination 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status code should be 200', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('response header Content-Type should be application/json', () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should be an object', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should have correct properties and value', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseJson).to.haveOwnProperty('success');\r",
+							"    pm.expect(responseJson).to.haveOwnProperty('message');\r",
+							"    pm.expect(responseJson).to.haveOwnProperty('data');\r",
+							"\r",
+							"    pm.expect(responseJson.success).to.equals(true);\r",
+							"    pm.expect(responseJson.message).to.equals('Destination retrieved successfully');\r",
+							"    pm.expect(responseJson.data).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body data should have correct properties', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    const { data } = responseJson;\r",
+							"\r",
+							"    pm.expect(data).to.haveOwnProperty('id');\r",
+							"    pm.expect(data.id).to.not.equals('');\r",
+							"    pm.expect(data).to.haveOwnProperty('primaryType');\r",
+							"    pm.expect(data).to.haveOwnProperty('address');\r",
+							"    pm.expect(data).to.haveOwnProperty('rating');\r",
+							"    pm.expect(data).to.haveOwnProperty('latitude');\r",
+							"    pm.expect(data.latitude).to.be.a(\"number\");\r",
+							"    pm.expect(data).to.haveOwnProperty('longitude');\r",
+							"    pm.expect(data.longitude).to.be.a(\"number\");\r",
+							"    pm.expect(data).to.haveOwnProperty('photosList');\r",
+							"    pm.expect(data.photosList).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('opens');\r",
+							"    pm.expect(data.opens).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('closes');\r",
+							"    pm.expect(data.closes).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('types');\r",
+							"    pm.expect(data.types).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('name');\r",
+							"\r",
+							"    pm.environment.set('lat2', data.latitude);\r",
+							"    pm.environment.set('long2', data.longitude);\r",
+							"    pm.environment.set('open2', data.opens[0]);\r",
+							"    pm.environment.set('close2', data.closes[0]);\r",
+							"    pm.environment.set('rating2', data.rating);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{API_URL}}/v1/destinations/list/{{placeId2}}",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"v1",
+						"destinations",
+						"list",
+						"{{placeId2}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Destination 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status code should be 200', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('response header Content-Type should be application/json', () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should be an object', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should have correct properties and value', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseJson).to.haveOwnProperty('success');\r",
+							"    pm.expect(responseJson).to.haveOwnProperty('message');\r",
+							"    pm.expect(responseJson).to.haveOwnProperty('data');\r",
+							"\r",
+							"    pm.expect(responseJson.success).to.equals(true);\r",
+							"    pm.expect(responseJson.message).to.equals('Destination retrieved successfully');\r",
+							"    pm.expect(responseJson.data).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body data should have correct properties', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    const { data } = responseJson;\r",
+							"\r",
+							"    pm.expect(data).to.haveOwnProperty('id');\r",
+							"    pm.expect(data.id).to.not.equals('');\r",
+							"    pm.expect(data).to.haveOwnProperty('primaryType');\r",
+							"    pm.expect(data).to.haveOwnProperty('address');\r",
+							"    pm.expect(data).to.haveOwnProperty('rating');\r",
+							"    pm.expect(data).to.haveOwnProperty('latitude');\r",
+							"    pm.expect(data.latitude).to.be.a(\"number\");\r",
+							"    pm.expect(data).to.haveOwnProperty('longitude');\r",
+							"    pm.expect(data.longitude).to.be.a(\"number\");\r",
+							"    pm.expect(data).to.haveOwnProperty('photosList');\r",
+							"    pm.expect(data.photosList).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('opens');\r",
+							"    pm.expect(data.opens).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('closes');\r",
+							"    pm.expect(data.closes).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('types');\r",
+							"    pm.expect(data.types).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('name');\r",
+							"\r",
+							"    pm.environment.set('lat3', data.latitude);\r",
+							"    pm.environment.set('long3', data.longitude);\r",
+							"    pm.environment.set('open3', data.opens[0]);\r",
+							"    pm.environment.set('close3', data.closes[0]);\r",
+							"    pm.environment.set('rating3', data.rating);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{API_URL}}/v1/destinations/list/{{placeId3}}",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"v1",
+						"destinations",
+						"list",
+						"{{placeId3}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Destination 4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status code should be 200', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('response header Content-Type should be application/json', () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should be an object', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should have correct properties and value', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseJson).to.haveOwnProperty('success');\r",
+							"    pm.expect(responseJson).to.haveOwnProperty('message');\r",
+							"    pm.expect(responseJson).to.haveOwnProperty('data');\r",
+							"\r",
+							"    pm.expect(responseJson.success).to.equals(true);\r",
+							"    pm.expect(responseJson.message).to.equals('Destination retrieved successfully');\r",
+							"    pm.expect(responseJson.data).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body data should have correct properties', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    const { data } = responseJson;\r",
+							"\r",
+							"    pm.expect(data).to.haveOwnProperty('id');\r",
+							"    pm.expect(data.id).to.not.equals('');\r",
+							"    pm.expect(data).to.haveOwnProperty('primaryType');\r",
+							"    pm.expect(data).to.haveOwnProperty('address');\r",
+							"    pm.expect(data).to.haveOwnProperty('rating');\r",
+							"    pm.expect(data).to.haveOwnProperty('latitude');\r",
+							"    pm.expect(data.latitude).to.be.a(\"number\");\r",
+							"    pm.expect(data).to.haveOwnProperty('longitude');\r",
+							"    pm.expect(data.longitude).to.be.a(\"number\");\r",
+							"    pm.expect(data).to.haveOwnProperty('photosList');\r",
+							"    pm.expect(data.photosList).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('opens');\r",
+							"    pm.expect(data.opens).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('closes');\r",
+							"    pm.expect(data.closes).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('types');\r",
+							"    pm.expect(data.types).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('name');\r",
+							"\r",
+							"    pm.environment.set('lat4', data.latitude);\r",
+							"    pm.environment.set('long4', data.longitude);\r",
+							"    pm.environment.set('open4', data.opens[0]);\r",
+							"    pm.environment.set('close4', data.closes[0]);\r",
+							"    pm.environment.set('rating4', data.rating);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{API_URL}}/v1/destinations/list/{{placeId4}}",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"v1",
+						"destinations",
+						"list",
+						"{{placeId4}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Destination 5",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status code should be 200', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('response header Content-Type should be application/json', () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should be an object', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should have correct properties and value', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseJson).to.haveOwnProperty('success');\r",
+							"    pm.expect(responseJson).to.haveOwnProperty('message');\r",
+							"    pm.expect(responseJson).to.haveOwnProperty('data');\r",
+							"\r",
+							"    pm.expect(responseJson.success).to.equals(true);\r",
+							"    pm.expect(responseJson.message).to.equals('Destination retrieved successfully');\r",
+							"    pm.expect(responseJson.data).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body data should have correct properties', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    const { data } = responseJson;\r",
+							"\r",
+							"    pm.expect(data).to.haveOwnProperty('id');\r",
+							"    pm.expect(data.id).to.not.equals('');\r",
+							"    pm.expect(data).to.haveOwnProperty('primaryType');\r",
+							"    pm.expect(data).to.haveOwnProperty('address');\r",
+							"    pm.expect(data).to.haveOwnProperty('rating');\r",
+							"    pm.expect(data).to.haveOwnProperty('latitude');\r",
+							"    pm.expect(data.latitude).to.be.a(\"number\");\r",
+							"    pm.expect(data).to.haveOwnProperty('longitude');\r",
+							"    pm.expect(data.longitude).to.be.a(\"number\");\r",
+							"    pm.expect(data).to.haveOwnProperty('photosList');\r",
+							"    pm.expect(data.photosList).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('opens');\r",
+							"    pm.expect(data.opens).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('closes');\r",
+							"    pm.expect(data.closes).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('types');\r",
+							"    pm.expect(data.types).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('name');\r",
+							"\r",
+							"    pm.environment.set('lat5', data.latitude);\r",
+							"    pm.environment.set('long5', data.longitude);\r",
+							"    pm.environment.set('open5', data.opens[0]);\r",
+							"    pm.environment.set('close5', data.closes[0]);\r",
+							"    pm.environment.set('rating5', data.rating);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{API_URL}}/v1/destinations/list/{{placeId5}}",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"v1",
+						"destinations",
+						"list",
+						"{{placeId5}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Destination 6",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status code should be 200', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('response header Content-Type should be application/json', () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should be an object', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should have correct properties and value', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseJson).to.haveOwnProperty('success');\r",
+							"    pm.expect(responseJson).to.haveOwnProperty('message');\r",
+							"    pm.expect(responseJson).to.haveOwnProperty('data');\r",
+							"\r",
+							"    pm.expect(responseJson.success).to.equals(true);\r",
+							"    pm.expect(responseJson.message).to.equals('Destination retrieved successfully');\r",
+							"    pm.expect(responseJson.data).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body data should have correct properties', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    const { data } = responseJson;\r",
+							"\r",
+							"    pm.expect(data).to.haveOwnProperty('id');\r",
+							"    pm.expect(data.id).to.not.equals('');\r",
+							"    pm.expect(data).to.haveOwnProperty('primaryType');\r",
+							"    pm.expect(data).to.haveOwnProperty('address');\r",
+							"    pm.expect(data).to.haveOwnProperty('rating');\r",
+							"    pm.expect(data).to.haveOwnProperty('latitude');\r",
+							"    pm.expect(data.latitude).to.be.a(\"number\");\r",
+							"    pm.expect(data).to.haveOwnProperty('longitude');\r",
+							"    pm.expect(data.longitude).to.be.a(\"number\");\r",
+							"    pm.expect(data).to.haveOwnProperty('photosList');\r",
+							"    pm.expect(data.photosList).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('opens');\r",
+							"    pm.expect(data.opens).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('closes');\r",
+							"    pm.expect(data.closes).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('types');\r",
+							"    pm.expect(data.types).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('name');\r",
+							"\r",
+							"    pm.environment.set('lat6', data.latitude);\r",
+							"    pm.environment.set('long6', data.longitude);\r",
+							"    pm.environment.set('open6', data.opens[0]);\r",
+							"    pm.environment.set('close6', data.closes[0]);\r",
+							"    pm.environment.set('rating6', data.rating);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{API_URL}}/v1/destinations/list/{{placeId6}}",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"v1",
+						"destinations",
+						"list",
+						"{{placeId6}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Destination 7",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status code should be 200', () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('response header Content-Type should be application/json', () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should be an object', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should have correct properties and value', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseJson).to.haveOwnProperty('success');\r",
+							"    pm.expect(responseJson).to.haveOwnProperty('message');\r",
+							"    pm.expect(responseJson).to.haveOwnProperty('data');\r",
+							"\r",
+							"    pm.expect(responseJson.success).to.equals(true);\r",
+							"    pm.expect(responseJson.message).to.equals('Destination retrieved successfully');\r",
+							"    pm.expect(responseJson.data).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body data should have correct properties', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    const { data } = responseJson;\r",
+							"\r",
+							"    pm.expect(data).to.haveOwnProperty('id');\r",
+							"    pm.expect(data.id).to.not.equals('');\r",
+							"    pm.expect(data).to.haveOwnProperty('primaryType');\r",
+							"    pm.expect(data).to.haveOwnProperty('address');\r",
+							"    pm.expect(data).to.haveOwnProperty('rating');\r",
+							"    pm.expect(data).to.haveOwnProperty('latitude');\r",
+							"    pm.expect(data.latitude).to.be.a(\"number\");\r",
+							"    pm.expect(data).to.haveOwnProperty('longitude');\r",
+							"    pm.expect(data.longitude).to.be.a(\"number\");\r",
+							"    pm.expect(data).to.haveOwnProperty('photosList');\r",
+							"    pm.expect(data.photosList).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('opens');\r",
+							"    pm.expect(data.opens).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('closes');\r",
+							"    pm.expect(data.closes).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('types');\r",
+							"    pm.expect(data.types).to.be.an(\"array\");\r",
+							"    pm.expect(data).to.haveOwnProperty('name');\r",
+							"\r",
+							"    pm.environment.set('lat7', data.latitude);\r",
+							"    pm.environment.set('long7', data.longitude);\r",
+							"    pm.environment.set('open7', data.opens[0]);\r",
+							"    pm.environment.set('close7', data.closes[0]);\r",
+							"    pm.environment.set('rating7', data.rating);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{API_URL}}/v1/destinations/list/{{placeId7}}",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"v1",
+						"destinations",
+						"list",
+						"{{placeId7}}"
 					]
 				}
 			},
@@ -416,6 +995,60 @@
 		},
 		{
 			"name": "Create Plan",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"  pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success true\", function () {\r",
+							"  var jsonData = pm.response.json();\r",
+							"  pm.expect(jsonData.success).to.be.true;\r",
+							"});\r",
+							"\r",
+							"pm.test('response header Content-Type should be application/json', () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should be an object', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains valid message\", function () {\r",
+							"  var jsonData = pm.response.json();\r",
+							"  pm.expect(jsonData.message).to.include(\"Plan with id:\");\r",
+							"  pm.expect(jsonData.message).to.include(\"created successfully\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains valid plan data\", function () {\r",
+							"  var jsonData = pm.response.json();\r",
+							"  const planName = pm.environment.get(\"plan_name\");\r",
+							"  const startDate = pm.environment.get(\"start_date\");\r",
+							"  const endDate = pm.environment.get(\"end_date\");\r",
+							"\r",
+							"  pm.expect(jsonData.data).to.have.property(\"plan_name\", planName);\r",
+							"  pm.expect(jsonData.data).to.have.property(\"start_date\", startDate);\r",
+							"  pm.expect(jsonData.data).to.have.property(\"end_date\", endDate);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Ensure plan_id format is correct\", function () {\r",
+							"  var jsonData = pm.response.json();\r",
+							"  var planId = jsonData.message.match(/plan\\d+/);\r",
+							"  pm.expect(planId).to.not.be.null;\r",
+							"\r",
+							"  pm.environment.set('planId',planId);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -431,7 +1064,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "",
+					"raw": "{\r\n  \"plan_name\": \"{{plan_name}}\",\r\n  \"num_days\": {{duration}},\r\n  \"lokasi_user\": {\r\n    \"latitude\": {{userLat}},\r\n    \"longitude\": {{userLong}}\r\n  },\r\n  \"start_date\": \"{{start_date}}\",\r\n  \"end_date\": \"{{end_date}}\",\r\n  \"places\": [\r\n    {\"place_id\": \"{{placeId1}}\", \"latitude\": {{lat1}}, \"longitude\": {{long1}}, \"rating\": {{rating1}}, \"open_time\": \"{{open1}}\", \"close_time\": \"{{close1}}\"},\r\n    {\"place_id\": \"{{placeId2}}\", \"latitude\": {{lat2}}, \"longitude\": {{long2}}, \"rating\": {{rating2}}, \"open_time\": \"{{open2}}\", \"close_time\": \"{{close2}}\"},\r\n    {\"place_id\": \"{{placeId3}}\", \"latitude\": {{lat3}}, \"longitude\": {{long3}}, \"rating\": {{rating3}}, \"open_time\": \"{{open3}}\", \"close_time\": \"{{close3}}\"},\r\n    {\"place_id\": \"{{placeId4}}\", \"latitude\": {{lat4}}, \"longitude\": {{long4}}, \"rating\": {{rating4}}, \"open_time\": \"{{open4}}\", \"close_time\": \"{{close4}}\"},\r\n    {\"place_id\": \"{{placeId5}}\", \"latitude\": {{lat5}}, \"longitude\": {{long5}}, \"rating\": {{rating5}}, \"open_time\": \"{{open5}}\", \"close_time\": \"{{close5}}\"},\r\n    {\"place_id\": \"{{placeId6}}\", \"latitude\": {{lat6}}, \"longitude\": {{long6}}, \"rating\": {{rating6}}, \"open_time\": \"{{open6}}\", \"close_time\": \"{{close6}}\"},\r\n    {\"place_id\": \"{{placeId7}}\", \"latitude\": {{lat7}}, \"longitude\": {{long7}}, \"rating\": {{rating7}}, \"open_time\": \"{{open7}}\", \"close_time\": \"{{close7}}\"}\r\n  ]\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -454,6 +1087,53 @@
 		},
 		{
 			"name": "Get Plan",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response body contains success true\", function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.success).to.be.true;",
+							"});",
+							"",
+							"pm.test('response header Content-Type should be application/json', () => {",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8');",
+							"});",
+							"",
+							"pm.test('response body should be an object', () => {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson).to.be.an('object');",
+							"});",
+							"",
+							"pm.test(\"Response message confirms data retrieval\", function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.message).to.equals(`Plans data for id ${pm.environment.get(\"planId\")} retrieved`);",
+							"});",
+							"",
+							"pm.test(\"Response data should contain 'data' object\", function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.data).to.be.an(\"object\");",
+							"});",
+							"",
+							"pm.test(\"Response 'data' should have sorted keys\", function () {",
+							"  var jsonData = pm.response.json();",
+							"  if (jsonData.data && jsonData.data.data) {",
+							"    const keys = Object.keys(jsonData.data.data);",
+							"    const sortedKeys = [...keys].sort();",
+							"    pm.expect(keys).to.deep.equal(sortedKeys);",
+							"  }",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -572,6 +1252,51 @@
 		},
 		{
 			"name": "Update Plan",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('response header Content-Type should be application/json', () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should be an object', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success true\", function () {\r",
+							"  var jsonData = pm.response.json();\r",
+							"  pm.expect(jsonData.success).to.be.true;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains valid message\", function () {\r",
+							"  var jsonData = pm.response.json();\r",
+							"  pm.expect(jsonData.message).to.equals(`Plans data for id ${pm.environment.get(\"planId\")} updated`);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains updated data\", function () {\r",
+							"  var jsonData = pm.response.json();\r",
+							"  const planName_updated = pm.environment.get(\"plan_name_updated\");\r",
+							"  const startDate_updated = pm.environment.get(\"start_date_updated\");\r",
+							"  const endDate_updated = pm.environment.get(\"end_date_updated\");\r",
+							"\r",
+							"  pm.expect(jsonData.data).to.have.property(\"plan_name\", planName_updated);\r",
+							"  pm.expect(jsonData.data).to.have.property(\"start_date\", startDate_updated);\r",
+							"  pm.expect(jsonData.data).to.have.property(\"end_date\", endDate_updated);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -587,7 +1312,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "",
+					"raw": "{\r\n  \"plan_name\": \"{{plan_name_updated}}\",\r\n  \"start_date\": \"{{start_date_updated}}\",\r\n  \"end_date\": \"{{end_date_updated}}\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -611,6 +1336,40 @@
 		},
 		{
 			"name": "Delete Plan",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('response header Content-Type should be application/json', () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.equals('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"pm.test('response body should be an object', () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains success true\", function () {\r",
+							"  var jsonData = pm.response.json();\r",
+							"  pm.expect(jsonData.success).to.be.true;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response message confirms deletion\", function () {\r",
+							"  var jsonData = pm.response.json();\r",
+							"  pm.expect(jsonData.message).to.equals(`Plan with id: ${pm.environment.get(\"planId\")}, deleted successfully`);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
