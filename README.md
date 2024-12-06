@@ -67,17 +67,17 @@ Full documentation for this API is available in this [link](https://docs.google.
 ## API Endpoints
 
 | Endpoint                      | Method   | Description                                                            |
-| :---------------------------- | :------- | :--------------------------------------------------------------------- |
-| /auth/login                   | `POST`   | Authenticates a user with email and password, returning a token        |
-| /auth/signup                  | `POST`   | Registers a new user with name, email, and password, returning a token |
-| /auth/plans/create            | `POST`   | Creates a new itinerary using optimization                             |
-| /auth/plans/list/:id          | `GET`    | Retrieves an itinerary for a specific user                             |
-| /auth/plans/list              | `GET`    | Retrieves a list of itinerary for a specific user                      |
-| /auth/plans/update/:id        | `PUT`    | Updates an existing itinerary                                          |
-| /auth/plans/delete/:id        | `DELETE` | Deletes an existing itinerary                                          |
-| /auth/destinations/create/:id | `POST`   | Creates a new destination data                                         |
-| /auth/destinations/list/:id   | `GET`    | Retrieves a destination data                                           |
-| /auth/destinations/list       | `GET`    | Retrieves a list of destination data                                   |
+| :----------------------- | :------- | :--------------------------------------------------------------------- |
+| /auth/login              | `POST`   | Authenticates a user with email and password, returning a token        |
+| /auth/signup             | `POST`   | Registers a new user with name, email, and password, returning a token |
+| /plans/create            | `POST`   | Creates a new itinerary using optimization                             |
+| /plans/list/:id          | `GET`    | Retrieves an itinerary for a specific user                             |
+| /plans/list              | `GET`    | Retrieves a list of itinerary for a specific user                      |
+| /plans/update/:id        | `PUT`    | Updates an existing itinerary                                          |
+| /plans/delete/:id        | `DELETE` | Deletes an existing itinerary                                          |
+| /destinations/create/:id | `POST`   | Creates a new destination data                                         |
+| /destinations/list/:id   | `GET`    | Retrieves a destination data                                           |
+| /destinations/list       | `GET`    | Retrieves a list of destination data                                   |
 
 <br>
 
