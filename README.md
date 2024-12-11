@@ -66,7 +66,7 @@ Full documentation for this API is available in this [link](https://docs.google.
 
 ## API Endpoints
 
-| Endpoint                      | Method   | Description                                                            |
+| Endpoint                 | Method   | Description                                                            |
 | :----------------------- | :------- | :--------------------------------------------------------------------- |
 | /auth/login              | `POST`   | Authenticates a user with email and password, returning a token        |
 | /auth/signup             | `POST`   | Registers a new user with name, email, and password, returning a token |
