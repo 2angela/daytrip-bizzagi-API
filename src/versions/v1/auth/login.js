@@ -2,7 +2,7 @@ import { firebaseAuth, db } from "../../../index.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 
-const Login = async (request, response, next) => {
+const Login = async (request, response) => {
   const { email, password } = request.body;
 
   try {
@@ -33,7 +33,11 @@ const Login = async (request, response, next) => {
       }
     });
   } catch (err) {
-    next(err);
+    return response.status(401).json({
+      success: false,
+      message: "Failed to Login! Wrong Email or Password!",
+      error: err.message
+    });
   }
 };
 

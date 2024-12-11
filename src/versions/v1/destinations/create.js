@@ -49,7 +49,6 @@ const Create = async (request, response, next) => {
 
       const validDestinationTypes = [
         "tourist_attraction",
-        "point_of_interest",
         "landmark",
         "amusement_park",
         "zoo",
