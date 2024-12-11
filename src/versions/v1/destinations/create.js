@@ -52,7 +52,12 @@ const Create = async (request, response, next) => {
         "point_of_interest",
         "landmark",
         "amusement_park",
-        "zoo"
+        "zoo",
+        "museum",
+        "park",
+        "aquarium",
+        "art_gallery",
+        "natural_feature"
       ];
 
       // reject request for non-travel places
@@ -140,7 +145,7 @@ const Create = async (request, response, next) => {
         types: types || [],
         primaryType: primaryType || "",
         address: address || "",
-        rating: rating || "",
+        rating: rating || 0,
         opens,
         closes,
         photosList: photosLinks
