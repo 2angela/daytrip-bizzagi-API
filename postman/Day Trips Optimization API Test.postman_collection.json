@@ -2,10 +2,10 @@
 	"info": {
 		"_postman_id": "3af6d909-ab80-4e11-968a-2b30fc23a790",
 		"name": "Day Trips Optimization API Test",
-		"description": "To run the automated testing:\n\n1. Import the testing collection to Postman (file name: Day Trips Optimization Test.postman_collection.json)\n    \n2. Import the testing environment to Postman (file name: Day Trips Optimization Test.postman_environment.json)\n    \n3. Make sure the environment is set to \"Day Trips Optimization\"\n    \n4. Click \"Run\" button\n    \n5. On Runner tab, click \"Run Day Trips Optimization Test\" button",
+		"description": "This documentation is only for running tests. Full API documentation can be accessed in this link [https://docs.google.com/document/d/1ecmBLTRjJBAzvh5SqJnowpJjhykrgn1_vNsF2gCmXjk/edit?usp=sharing](https://docs.google.com/document/d/1ecmBLTRjJBAzvh5SqJnowpJjhykrgn1_vNsF2gCmXjk/edit?usp=sharing)\n\nTo run the automated testing:\n\n1. Import the testing collection to Postman (file name: Day Trips Optimization Test.postman_collection.json)\n    \n2. Import the testing environment to Postman (file name: Day Trips Optimization Test.postman_environment.json)\n    \n3. Make sure the environment is set to \"Day Trips Optimization\"\n    \n4. Click \"Run\" button\n    \n5. On Runner tab, click \"Run Day Trips Optimization Test\" button\n    \n\n** Some requests require variables created from running other requests.\n\n** Running the tests in order is recommended.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "31198296",
-		"_collection_link": "https://c242-dt01.postman.co/workspace/C242-DT01-Workspace~c07dd806-b976-4649-b364-4ddb685f5714/collection/31198296-3af6d909-ab80-4e11-968a-2b30fc23a790?action=share&source=collection_link&creator=31198296"
+		"_collection_link": "https://c242-dt01.postman.co/workspace/c07dd806-b976-4649-b364-4ddb685f5714/collection/31198296-3af6d909-ab80-4e11-968a-2b30fc23a790?action=share&source=collection_link&creator=31198296"
 	},
 	"item": [
 		{
@@ -78,7 +78,8 @@
 						"auth",
 						"signup"
 					]
-				}
+				},
+				"description": "Creates a new credential to authenticate new users. This endpoint returns a token required to access restricted services. **This request is for testing failed sign up because email already existed.**"
 			},
 			"response": []
 		},
@@ -164,7 +165,8 @@
 						"auth",
 						"login"
 					]
-				}
+				},
+				"description": "Authenticates a user and returns a token required to access restricted services."
 			},
 			"response": []
 		},
@@ -253,7 +255,8 @@
 						"create",
 						"{{placeId1}}"
 					]
-				}
+				},
+				"description": "Create destination will return an error response if destination data with the requested place-id already exists in the database."
 			},
 			"response": []
 		},
@@ -324,7 +327,8 @@
 						"destinations",
 						"list"
 					]
-				}
+				},
+				"description": "Returns all destination data from the database. For singular destination data, use /list/:id endpoint"
 			},
 			"response": []
 		},
@@ -419,7 +423,8 @@
 						"list",
 						"{{placeId1}}"
 					]
-				}
+				},
+				"description": "Returns singular destination data from the database if it exists. Destination data must be created first using /create/:place-id endpoint."
 			},
 			"response": []
 		},
@@ -514,7 +519,8 @@
 						"list",
 						"{{placeId2}}"
 					]
-				}
+				},
+				"description": "Returns singular destination data from the database if it exists. Destination data must be created first using /create/:place-id endpoint."
 			},
 			"response": []
 		},
@@ -609,7 +615,8 @@
 						"list",
 						"{{placeId3}}"
 					]
-				}
+				},
+				"description": "Returns singular destination data from the database if it exists. Destination data must be created first using /create/:place-id endpoint."
 			},
 			"response": []
 		},
@@ -704,7 +711,8 @@
 						"list",
 						"{{placeId4}}"
 					]
-				}
+				},
+				"description": "Returns singular destination data from the database if it exists. Destination data must be created first using /create/:place-id endpoint."
 			},
 			"response": []
 		},
@@ -799,7 +807,8 @@
 						"list",
 						"{{placeId5}}"
 					]
-				}
+				},
+				"description": "Returns singular destination data from the database if it exists. Destination data must be created first using /create/:place-id endpoint."
 			},
 			"response": []
 		},
@@ -894,7 +903,8 @@
 						"list",
 						"{{placeId6}}"
 					]
-				}
+				},
+				"description": "Returns singular destination data from the database if it exists. Destination data must be created first using /create/:place-id endpoint."
 			},
 			"response": []
 		},
@@ -989,7 +999,8 @@
 						"list",
 						"{{placeId7}}"
 					]
-				}
+				},
+				"description": "Returns singular destination data from the database if it exists. Destination data must be created first using /create/:place-id endpoint."
 			},
 			"response": []
 		},
@@ -1081,7 +1092,8 @@
 						"plans",
 						"create"
 					]
-				}
+				},
+				"description": "Runs an operation to generate an optimized travel plan from a list of destinations"
 			},
 			"response": []
 		},
@@ -1170,7 +1182,8 @@
 						"list",
 						"{{planId}}"
 					]
-				}
+				},
+				"description": "Returns singular plan data from the database containing a list of destinations for each day. data\\[0\\] means travel plan for day-1, and so on."
 			},
 			"response": []
 		},
@@ -1246,7 +1259,8 @@
 						"plans",
 						"list"
 					]
-				}
+				},
+				"description": "Returns all plan data for the user in the current session. data\\[0\\] means data of the first plan, data\\[1\\] means data of the second plan, and so on."
 			},
 			"response": []
 		},
@@ -1330,7 +1344,8 @@
 						"update",
 						"{{planId}}"
 					]
-				}
+				},
+				"description": "Runs an operation to update a singular travel plan belonging to the user in the current session."
 			},
 			"response": []
 		},
@@ -1403,7 +1418,8 @@
 						"delete",
 						"{{planId}}"
 					]
-				}
+				},
+				"description": "Runs an operation to delete a singular travel plan belonging to the user in the current session."
 			},
 			"response": []
 		}

@@ -91,4 +91,4 @@ Testing for this API was conducted using Postman. The collection and environment
 
 Deployed using Cloud Run
 
-https://c242-dt01-api-304525226938.asia-southeast2.run.app
+https://c242-dt01-api-service-304525226938.asia-southeast2.run.app
